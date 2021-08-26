@@ -1,6 +1,8 @@
 package com.zachcc.user.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zachcc.common.common.Result;
 import com.zachcc.common.common.ResultCode;
 import com.zachcc.common.utils.JWTUtils;
@@ -16,6 +18,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -71,20 +74,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Result deleteUser(String uuid) {
-        log.info(uuid);
-        if (uuid.equals("")){
-            User user = (User) SecurityUtils.getSubject().getPrincipal();
-            Boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
-            if (isAdmin){
-                return Result.SUCCESS();
-//                return Result.SUCCESS(userDao.deleteByUUID(user.getUuid()));
-            } else {
-                return Result.FAIL("您没有权限删除用户！");
-            }
-        }else {
-//            userDao.deleteByUUID(uuid);
-            return Result.SUCCESS();
-        }
+        return Result.SUCCESS(userDao.deleteByUUID(uuid));
     }
 
     @Override
@@ -95,8 +85,16 @@ public class UserServiceImp implements UserService {
             user.setPassword("");
             return Result.SUCCESS(user);
         } else {
-            return Result.SUCCESS();
-//            return Result.SUCCESS(userDao.selectByUUID(uuid));
+            return Result.SUCCESS(userDao.selectByUUID(uuid));
         }
+    }
+
+    @Override
+    public Result selectAllUsers(int start, int size) {
+        PageHelper.startPage(start,size);
+        List<User> userList = userDao.selectUsers();
+        PageInfo<User> pageInfo = new PageInfo<>(userList,5);
+        return Result.SUCCESS(pageInfo);
+
     }
 }

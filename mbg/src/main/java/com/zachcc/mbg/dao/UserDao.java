@@ -4,6 +4,8 @@ import com.zachcc.mbg.entities.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserDao {
     int deleteByPrimaryKey(Integer id);
@@ -12,7 +14,11 @@ public interface UserDao {
 
     int insertSelective(User record);
 
+    List<User> selectUsers();
+
     User selectByPrimaryKey(Integer id);
+
+    User selectByUUID(String uuid);
 
     User selectByName(String name);
 
@@ -22,5 +28,6 @@ public interface UserDao {
 
     int updateByPrimaryKey(User record);
 
+    int deleteByUUID(String uuid);
 
 }

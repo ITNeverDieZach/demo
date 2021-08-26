@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,11 +52,18 @@ public class UserController {
 
     @GetMapping("/userInfo")
     public Result getUserInfo(@RequestParam(value = "uuid", defaultValue = "") String uuid) {
-        return userService.getUserInfo(uuid);
+            return userService.getUserInfo(uuid);
     }
 
     @GetMapping("/deleteUser")
-    public Result deleteUser(@RequestParam(value = "uuid", defaultValue = "") String uuid) {
-        return userService.deleteUser(uuid);
+    @RequiresRoles("admin")
+    public Result deleteUser(@RequestBody User user) {
+        return userService.deleteUser(user.getUuid());
+    }
+
+    @RequiresRoles("admin")
+    @GetMapping("/listUser")
+    public Result listUser (@RequestParam(value = "start",defaultValue = "0")int start){
+        return userService.selectAllUsers(start,10);
     }
 }

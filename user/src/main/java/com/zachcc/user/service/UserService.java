@@ -17,4 +17,6 @@ public interface UserService {
     public Result deleteUser(String uuid);
 
     public Result getUserInfo(String uuid);
+
+    public Result selectAllUsers(int start,int size);
 }

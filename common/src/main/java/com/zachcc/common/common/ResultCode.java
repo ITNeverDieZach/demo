@@ -14,7 +14,7 @@ package com.zachcc.common.common;
 public enum ResultCode {
 
     /* 成功状态码 */
-    SUCCESS(0, "操作成功！"),
+    SUCCESS(200, "操作成功！"),
 
     /* 错误状态码 */
     FAIL(-1, "操作失败！"),

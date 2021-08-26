@@ -11,6 +11,9 @@
     <result column="uuid" jdbcType="VARCHAR" property="uuid" />
     <result column="background" jdbcType="VARCHAR" property="background" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <collection property="roles" ofType="String">
+      <result column="role"/>
+    </collection>
   </resultMap>
   <resultMap id="userPermission" type="com.zachcc.mbg.entities.User">
     <result column="name" property="name"/>
@@ -23,16 +26,24 @@
     id, `name`, `password`, gender, signature, img, uuid, background, telephone
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select
+    select u.*,ur.role
     <include refid="Base_Column_List" />
-    from user
-    where id = #{id,jdbcType=INTEGER}
+    from user u LEFT JOIN  user_role ur on u.uuid = ur.uuid
+    where u.id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUUID" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT u.*,ur.role
+    FROM USER u LEFT JOIN  user_role ur ON u.uuid = ur.uuId
+    WHERE  u.uuid = #{uuid}
+  </select>
+  <select id="selectUsers" resultMap="BaseResultMap">
+    SELECT u.* , ur.role
+    FROM USER u LEFT JOIN user_role ur ON u.uuid = ur.uuid
   </select>
   <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from user
-    where name = #{name,jdbcType=VARCHAR}
+    SELECT u.*,ur.role
+    FROM user u LEFT JOIN  user_role ur ON u.uuid = ur.uuid
+    where u.name = #{name,jdbcType=VARCHAR}
   </select>
   <select id="getUserPermission" resultMap="userPermission" parameterType="com.zachcc.mbg.entities.User">
     select distinct r.permission, u.name, u.uuid
@@ -149,4 +160,10 @@
       telephone = #{telephone,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <delete id="deleteByUUID" parameterType="java.lang.String">
+    delete
+    from user
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+
 </mapper>
